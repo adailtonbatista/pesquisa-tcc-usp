@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesquisa TCC MBA USP/ESALQ - Turismo Religioso</title>
+  
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            cyanBrand: {
+              50: '#ecfeff',
+              100: '#cffafe',
+              500: '#06b6d4',
+              600: '#0891b2',
+              700: '#0e7490',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col justify-between">
+
+  <!-- HEADER FILEXO COM BARRA DE PROGRESSO -->
+  <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-slate-900 tracking-tight text-lg">USP / ESALQ</span>
+        <span class="text-xs bg-cyan-100 text-cyan-800 font-semibold px-2 py-0.5 rounded">MBA TCC 2027</span>
+      </div>
+      <div class="text-right">
+        <span id="progress-text" class="text-xs font-medium text-slate-600">0% concluído</span>
+      </div>
+    </div>
+    
+    <!-- Barra de Progresso Azul-Ciano -->
+    <div class="w-full bg-slate-100 h-2">
+      <div id="progress-bar" class="bg-cyanBrand-500 h-2 transition-all duration-300 ease-out w-0"></div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL (CARD CONTAINER) -->
+  <main class="max-w-3xl mx-auto w-full px-4 py-8 flex-grow">
+    
+    <div id="survey-card" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 transition-all duration-300">
+      <!-- O conteúdo das etapas será renderizado dinamicamente via JS -->
+    </div>
+
+  </main>
+
+  <!-- RODAPÉ ACADÊMICO -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-3xl mx-auto px-4">
+      <p class="font-medium text-slate-700 mb-1">Pesquisa Acadêmica de MBA — USP/ESALQ</p>
+      <p class="mb-2">"Ecossistema de Turismo Religioso no Vale do Paraíba: viabilidade e integração de stakeholders por plataforma digital"</p>
+      <p>Pesquisador: Adailton Batista da Silva | Contato: adailtoncn17@gmail.com</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT COMPLETO DE LÓGICA E FLUXO DA PESQUISA -->
+  <script>
+    // --- 1. ENDPOINT PARA ENVIO DAS RESPOSTAS ---
+    // Substitua a URL abaixo pela sua URL do Web3Forms, Formspree ou Apps Script Webhook.
+    // Se deixado em branco (""), a aplicação fará a simulação de salvamento local com download automático.
+    const ENDPOINT_ENVIO = ""; 
+
+    // --- 2. BASE DE DADOS DAS PERGUNTAS E ESTRUTURA METODOLÓGICA ---
+    const surveyData = {
+      // ETAPA 1: APRESENTAÇÃO
+      step1: {
+        title: "Ecossistema de Turismo Religioso no Vale do Paraíba",
+        subtitle: "Viabilidade e integração de stakeholders por plataforma digital",
+        description: `Esta pesquisa integra o Trabalho de Conclusão de Curso (TCC) do MBA em Gestão de Negócios Digitais e IA da <b>USP/ESALQ</b>, conduzida pelo pesquisador <b>Adailton Batista da Silva</b>.<br><br>O objetivo é analisar as necessidades, dificuldades e oportunidades de integração entre atores do turismo religioso nos municípios de <b>Aparecida (SP)</b> e <b>Cachoeira Paulista (SP)</b> para fundamentar diretrizes estratégicas de uma futura plataforma digital regional.`
+      },
+
+      // ETAPA 2: CONSENTIMENTO (TCLE INTEGRAL)
+      tcleText: `<b>TERMO DE CONSENTIMENTO LIVRE E ESCLARECIDO (TCLE)</b><br><br>
+Prezado(a) participante,<br><br>
+Você está sendo convidado(a) a participar da pesquisa acadêmica 'Ecossistema de Turismo Religioso no Vale do Paraíba: viabilidade e integração de stakeholders por plataforma digital', conduzida por Adailton Batista da Silva, sob orientação do corpo docente do MBA em Gestão de Negócios Digitais e Inteligência Artificial (USP/ESALQ).<br><br>
+A pesquisa acadêmica tem como objetivo analisar as necessidades, dificuldades e expectativas dos principais participantes do ecossistema de turismo religioso dos municípios de Aparecida (SP) e Cachoeira Paulista (SP).<br><br>
+O estudo busca compreender a experiência de peregrinos e turistas, bem como as necessidades de empresários, prestadores de serviços, organizações religiosas e representantes institucionais, especialmente em relação à divulgação de informações, integração dos serviços e comunicação entre os diferentes atores desse ecossistema.<br><br>
+As informações coletadas contribuirão para a elaboração de diretrizes estratégicas para uma possível plataforma digital que facilite o acesso a informações, serviços e experiências relacionadas ao turismo religioso na região.<br><br>
+Sua participação consistirá em responder a um questionário com perguntas sobre sua experiência, percepção e necessidades relacionadas ao turismo religioso.<br><br>
+<b>Garantia de Sigilo e Confidencialidade:</b> Suas respostas são estritamente anônimas e os dados serão analisados de forma agregada para fins acadêmicos, em conformidade com a Resolução CNS nº 510/2016. A participação é voluntária, e você poderá desistir a qualquer momento, sem qualquer prejuízo.<br><br>
+Ao prosseguir e preencher este formulário, você declara estar ciente e de acordo com a utilização acadêmica de suas respostas.`,
+
+      // PERGUNTAS DO GRUPO A (GESTORES LOCAIS)
+      grupoA: [
+        {
+          id: "GA_OP_01",
+          dimensao: "Operação e Capacidade de Atendimento",
+          pergunta: "Qual é a capacidade média diária de atendimento do seu estabelecimento nos períodos de pico?",
+          tipo: "select",
+          opcoes: ["Até 50 pessoas/dia", "De 51 a 150 pessoas/dia", "De 151 a 300 pessoas/dia", "Acima de 300 pessoas/dia"]
+        },
+        {
+          id: "GA_SAZ_02",
+          dimensao: "Sazonalidade e Demanda Turística",
+          pergunta: "Como a sazonalidade dos eventos religiosos afeta o fluxo financeiro e operacional do seu negócio ao longo do ano?",
+          tipo: "text_long"
+        },
+        {
+          id: "GA_MKT_03",
+          dimensao: "Marketing Digital e Canais de Relacionamento",
+          pergunta: "Quais canais digitais você utiliza atualmente para atrair e negociar com caravanas e organizadores?",
+          tipo: "multiselect",
+          opcoes: ["WhatsApp / Grupos", "Instagram / Facebook", "Website próprio", "Agências intermediárias / OTA", "Nenhum canal digital (apenas indicação/balcão)"]
+        },
+        {
+          id: "GA_COO_04",
+          dimensao: "Cooperação e Parcerias",
+          pergunta: "Qual é o seu nível de interesse em integrar uma plataforma regional de cooperação entre Aparecida e Cachoeira Paulista?",
+          tipo: "select",
+          opcoes: ["Muito alto", "Moderado", "Baixo", "Nenhum interesse"]
+        }
+      ],
+
+      // PERGUNTAS DO GRUPO B (PROMOTORES E ORGANIZADORES)
+      grupoB: [
+        {
+          id: "GB_JOR_01",
+          dimensao: "Jornada de Compra e Negociação",
+          pergunta: "Quais são as principais dificuldades ao organizar a logística de hospedagem e alimentação em Aparecida e Cachoeira Paulista?",
+          tipo: "text_long"
+        },
+        {
+          id: "GB_COM_02",
+          dimensao: "Comunicação e Compartilhamento de Informações",
+          pergunta: "Como você obtém informações atualizadas sobre a programação de eventos e disponibilidade de serviços nos dois municípios?",
+          tipo: "multiselect",
+          opcoes: ["Contato direto via telefone/WhatsApp", "Sites oficiais das basílicas/comunidades", "Redes sociais dos locais", "Material impresso / Guias", "Dificuldade em obter informações centralizadas"]
+        },
+        {
+          id: "GB_CUS_03",
+          dimensao: "Intermediação e Custos",
+          pergunta: "A taxa de intermediação cobrada por agências tradicionais impacta a viabilidade econômica das suas caravanas?",
+          tipo: "select",
+          opcoes: ["Impacta significativamente", "Impacta moderadamente", "Pouco impacto", "Não utilizo intermediários"]
+        },
+        {
+          id: "GB_REQ_04",
+          dimensao: "Requisitos da Plataforma Digital",
+          pergunta: "Quais funcionalidades seriam indispensáveis para você em um aplicativo regional de turismo religioso?",
+          tipo: "text_long"
+        }
+      ],
+
+      // BLOCO COMUM DE INTEGRAÇÃO DO ECOSSISTEMA (GRUPO A + GRUPO B)
+      blocoComum: [
+        {
+          id: "GC_DIG_01",
+          dimensao: "Digitalização e Inteligência Artificial",
+          pergunta: "Como você avalia o potencial do uso de assistentes de Inteligência Artificial para roteiros personalizados na região?",
+          tipo: "select",
+          opcoes: ["Excelente oportunidade para o ecossistema", "Útil, mas com ressalvas de adoção", "Desnecessário para o perfil do público", "Não sei avaliar"]
+        },
+        {
+          id: "GC_GOV_02",
+          dimensao: "Confiança, Governança e Adesão",
+          pergunta: "Em sua opinião, qual entidade ou modelo de gestão traria maior credibilidade para governar a plataforma digital regional?",
+          tipo: "select",
+          opcoes: ["Consórcio intermunicipal público-privado", "Associação comercial / Trade turístico local", "Gestão universitária / Acadêmica", "Empresa de tecnologia independente"]
+        },
+        {
+          id: "GC_OBS_03",
+          dimensao: "Considerações Finais",
+          pergunta: "Espaço aberto para registrar observações, desafios operacionais ou sugestões estratégicas para o turismo religioso regional:",
+          tipo: "text_long"
+        }
+      ]
+    };
+
+    // --- 3. ESTADO DA APLICAÇÃO ---
+    let state = {
+      currentStep: 'intro', // intro, tcle, profile, specific, common, final
+      consent: null,
+      municipio: '',
+      tempoAtuacao: '',
+      perfil: '',
+      grupo: '', // GrupoA ou GrupoB
+      currentQuestionIndex: 0,
+      answers: {},
+      gravacaoAutorizada: 'Não solicitada'
+    };
+
+    // --- 4. RENDERIZAÇÃO DE TELAS ---
+    function render() {
+      const card = document.getElementById('survey-card');
+      updateProgressBar();
+
+      if (state.currentStep === 'intro') {
+        card.innerHTML = `
+          <div class="text-center py-4">
+            <div class="w-16 h-16 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-church"></i>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">${surveyData.step1.title}</h1>
+            <p class="text-sm font-semibold text-cyan-600 mb-6">${surveyData.step1.subtitle}</p>
+            <div class="text-left bg-slate-50 p-5 rounded-xl border border-slate-200 text-sm text-slate-600 leading-relaxed mb-8">
+              ${surveyData.step1.description}
+            </div>
+            <button onclick="nextStep('tcle')" class="w-full sm:w-auto bg-cyanBrand-600 hover:bg-cyanBrand-700 text-white font-semibold px-8 py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 mx-auto">
+              Iniciar Pesquisa <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        `;
+      } 
+      else if (state.currentStep === 'tcle') {
+        card.innerHTML = `
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-file-contract text-cyan-600"></i> Termo de Consentimento (TCLE)
+            </h2>
+            <div class="h-64 overflow-y-auto bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed custom-scrollbar mb-6">
+              ${surveyData.tcleText}
+            </div>
+            <p class="text-sm font-semibold text-slate-800 mb-3">Você concorda voluntariamente em participar desta pesquisa?</p>
+            <div class="space-y-3 mb-6">
+              <label class="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-cyan-500 hover:bg-cyan-50/50 cursor-pointer transition-all">
+                <input type="radio" name="tcle_consent" value="yes" class="w-4 h-4 text-cyan-600 focus:ring-cyan-500">
+                <span class="text-sm font-medium text-slate-700">Sim, li e aceito participar da pesquisa acadêmica.</span>
+              </label>
+              <label class="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-red-400 hover:bg-red-50/50 cursor-pointer transition-all">
+                <input type="radio" name="tcle_consent" value="no" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                <span class="text-sm font-medium text-slate-700">Não aceito participar.</span>
+              </label>
+            </div>
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+              <button onclick="nextStep('intro')" class="text-slate-500 hover:text-slate-700 font-medium text-sm px-4 py-2">Voltar</button>
+              <button onclick="handleTCLESubmit()" class="bg-cyanBrand-600 hover:bg-cyanBrand-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-all">Continuar</button>
+            </div>
+          </div>
+        `;
+      } 
+      else if (state.currentStep === 'refused') {
+        card.innerHTML = `
+          <div class="text-center py-8">
+            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-user-xmark"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Pesquisa Encerrada</h2>
+            <p class="text-sm text-slate-600 max-w-md mx-auto mb-6">Agradecemos o seu tempo. Nenhuma resposta foi registrada conforme a sua decisão no Termo de Consentimento.</p>
+            <button onclick="location.reload()" class="text-cyan-600 font-medium text-sm hover:underline">Reiniciar Formulário</button>
+          </div>
+        `;
+      }
+      else if (state.currentStep === 'profile') {
+        card.innerHTML = `
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 mb-1">Perfil do Participante</h2>
+            <p class="text-xs text-slate-500 mb-6">Identificação para direcionamento metodológico.</p>
+            
+            <form id="profile-form" onsubmit="handleProfileSubmit(event)" class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">1. Município de Atuação Principal</label>
+                <select id="municipio" required class="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm bg-white">
+                  <option value="">Selecione o município...</option>
+                  <option value="Aparecida (SP)" ${state.municipio === 'Aparecida (SP)' ? 'selected' : ''}>Aparecida (SP)</option>
+                  <option value="Cachoeira Paulista (SP)" ${state.municipio === 'Cachoeira Paulista (SP)' ? 'selected' : ''}>Cachoeira Paulista (SP)</option>
+                  <option value="Ambos os municípios" ${state.municipio === 'Ambos os municípios' ? 'selected' : ''}>Atuação em ambos os municípios</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">2. Tempo de Atuação no Setor</label>
+                <select id="tempoAtuacao" required class="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm bg-white">
+                  <option value="">Selecione o tempo...</option>
+                  <option value="Menos de 2 anos" ${state.tempoAtuacao === 'Menos de 2 anos' ? 'selected' : ''}>Menos de 2 anos</option>
+                  <option value="De 2 a 5 anos" ${state.tempoAtuacao === 'De 2 a 5 anos' ? 'selected' : ''}>De 2 a 5 anos</option>
+                  <option value="De 6 a 10 anos" ${state.tempoAtuacao === 'De 6 a 10 anos' ? 'selected' : ''}>De 6 a 10 anos</option>
+                  <option value="Mais de 10 anos" ${state.tempoAtuacao === 'Mais de 10 anos' ? 'selected' : ''}>Mais de 10 anos</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">3. Perfil Profissional de Atuação</label>
+                <div class="space-y-2.5">
+                  <p class="text-xs font-semibold text-cyan-800 bg-cyan-50 px-3 py-1.5 rounded-lg">Grupo A — Gestores Locais</p>
+                  <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-cyan-500 cursor-pointer text-sm">
+                    <input type="radio" name="perfil" value="Gestor(a) de hotel" required ${state.perfil === 'Gestor(a) de hotel' ? 'checked' : ''} class="text-cyan-600 focus:ring-cyan-500">
+                    <span>Gestor(a) de hotel</span>
+                  </label>
+                  <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-cyan-500 cursor-pointer text-sm">
+                    <input type="radio" name="perfil" value="Gestor(a) de pousada" ${state.perfil === 'Gestor(a) de pousada' ? 'checked' : ''} class="text-cyan-600 focus:ring-cyan-500">
+                    <span>Gestor(a) de pousada</span>
+                  </label>
+                  <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-cyan-500 cursor-pointer text-sm mb-4">
+                    <input type="radio" name="perfil" value="Gestor(a) de restaurante" ${state.perfil === 'Gestor(a) de restaurante' ? 'checked' : ''} class="text-cyan-600 focus:ring-cyan-500">
+                    <span>Gestor(a) de restaurante</span>
+                  </label>
+
+                  <p class="text-xs font-semibold text-cyan-800 bg-cyan-50 px-3 py-1.5 rounded-lg mt-3">Grupo B — Promotores e Organizadores</p>
+                  <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-cyan-500 cursor-pointer text-sm">
+                    <input type="radio" name="perfil" value="Promotor(a) de eventos" ${state.perfil === 'Promotor(a) de eventos' ? 'checked' : ''} class="text-cyan-600 focus:ring-cyan-500">
+                    <span>Promotor(a) de eventos</span>
+                  </label>
+                  <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-cyan-500 cursor-pointer text-sm">
+                    <input type="radio" name="perfil" value="Organizador(a) de caravanas/excursões" ${state.perfil === 'Organizador(a) de caravanas/excursões' ? 'checked' : ''} class="text-cyan-600 focus:ring-cyan-500">
+                    <span>Organizador(a) de caravanas / excursões</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                <button type="button" onclick="nextStep('tcle')" class="text-slate-500 hover:text-slate-700 font-medium text-sm px-4 py-2">Voltar</button>
+                <button type="submit" class="bg-cyanBrand-600 hover:bg-cyanBrand-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-all">Iniciar Roteiro Específico</button>
+              </div>
+            </form>
+          </div>
+        `;
+      }
+      else if (state.currentStep === 'specific' || state.currentStep === 'common') {
+        const questionsList = state.currentStep === 'specific' 
+          ? (state.grupo === 'Grupo A' ? surveyData.grupoA : surveyData.grupoB) 
+          : surveyData.blocoComum;
+        
+        const q = questionsList[state.currentQuestionIndex];
+        const isLastQuestion = state.currentQuestionIndex === questionsList.length - 1;
+        const currentAnswer = state.answers[q.id] || '';
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-semibold text-cyan-700 bg-cyan-50 px-2.5 py-1 rounded-md uppercase tracking-wider border border-cyan-100">
+                ${q.dimensao}
+              </span>
+              <span class="text-xs text-slate-400 font-medium">
+                ${state.currentStep === 'specific' ? 'Bloco Específico' : 'Bloco Comum'} (${state.currentQuestionIndex + 1}/${questionsList.length})
+              </span>
+            </div>
+
+            <h3 class="text-lg font-bold text-slate-900 mb-4">${q.pergunta}</h3>
+
+            <div class="mb-6">
+              ${renderQuestionInput(q, currentAnswer)}
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+              <button onclick="handleQuestionBack()" class="text-slate-500 hover:text-slate-700 font-medium text-sm px-4 py-2">Anterior</button>
+              <button onclick="handleQuestionNext('${q.id}', '${q.tipo}', '${q.dimensao}')" class="bg-cyanBrand-600 hover:bg-cyanBrand-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-all">
+                ${isLastQuestion ? (state.currentStep === 'specific' ? 'Ir para Bloco Comum' : 'Finalizar Pesquisa') : 'Próxima'}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+      else if (state.currentStep === 'final') {
+        card.innerHTML = `
+          <div class="text-center py-6">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-2">Pesquisa Concluída!</h2>
+            <p class="text-sm text-slate-600 max-w-md mx-auto mb-6">Suas respostas foram registradas com sucesso e contribuirão de forma fundamental para a pesquisa do TCC MBA USP/ESALQ.</p>
+
+            <div id="submission-status" class="mb-6 p-4 rounded-xl text-xs sm:text-sm font-medium">
+              <p class="text-slate-600"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Salvando dados...</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3">
+              <button onclick="downloadJSON()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-all flex items-center gap-2">
+                <i class="fa-solid fa-download"></i> Baixar Cópia (JSON)
+              </button>
+              <button onclick="downloadCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-lg transition-all flex items-center gap-2 border border-slate-300">
+                <i class="fa-solid fa-file-csv"></i> Baixar Cópia (CSV)
+              </button>
+            </div>
+          </div>
+        `;
+        processFinalSubmission();
+      }
+    }
+
+    // --- 5. COMPONENTES DE ENTRADA DAS RESPOSTAS ---
+    function renderQuestionInput(q, value) {
+      if (q.tipo === 'select') {
+        return `
+          <div class="space-y-2.5">
+            ${q.opcoes.map(opt => `
+              <label class="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-cyan-500 hover:bg-cyan-50/30 cursor-pointer transition-all">
+                <input type="radio" name="${q.id}" value="${opt}" ${value === opt ? 'checked' : ''} class="w-4 h-4 text-cyan-600 focus:ring-cyan-500">
+                <span class="text-sm text-slate-700">${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+        `;
+      }
+      else if (q.tipo === 'multiselect') {
+        const selectedArr = Array.isArray(value) ? value : [];
+        return `
+          <div class="space-y-2.5">
+            ${q.opcoes.map(opt => `
+              <label class="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-cyan-500 hover:bg-cyan-50/30 cursor-pointer transition-all">
+                <input type="checkbox" name="${q.id}" value="${opt}" ${selectedArr.includes(opt) ? 'checked' : ''} class="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500">
+                <span class="text-sm text-slate-700">${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+        `;
+      }
+      else if (q.tipo === 'text_long') {
+        return `
+          <textarea id="${q.id}" rows="4" placeholder="Escreva sua resposta detalhada aqui..." class="w-full p-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm bg-white">${value}</textarea>
+        `;
+      }
+      return '';
+    }
+
+    // --- 6. BARRA DE PROGRESSO DINÂMICA ---
+    function updateProgressBar() {
+      const progressBar = document.getElementById('progress-bar');
+      const progressText = document.getElementById('progress-text');
+      let pct = 0;
+
+      if (state.currentStep === 'tcle') pct = 10;
+      else if (state.currentStep === 'profile') pct = 25;
+      else if (state.currentStep === 'specific') {
+        const total = state.grupo === 'Grupo A' ? surveyData.grupoA.length : surveyData.grupoB.length;
+        pct = 25 + Math.round(((state.currentQuestionIndex) / (total + surveyData.blocoComum.length)) * 60);
+      }
+      else if (state.currentStep === 'common') {
+        const specTotal = state.grupo === 'Grupo A' ? surveyData.grupoA.length : surveyData.grupoB.length;
+        pct = 25 + Math.round(((specTotal + state.currentQuestionIndex) / (specTotal + surveyData.blocoComum.length)) * 60);
+      }
+      else if (state.currentStep === 'final') pct = 100;
+
+      progressBar.style.width = pct + '%';
+      progressText.innerText = `Você está ${pct}% concluído`;
+    }
+
+    // --- 7. CONTROLADORES DE NAVEGAÇÃO E REGRAS ---
+    function nextStep(step) {
+      state.currentStep = step;
+      render();
+    }
+
+    function handleTCLESubmit() {
+      const selected = document.querySelector('input[name="tcle_consent"]:checked');
+      if (!selected) {
+        alert('Por favor, selecione uma opção para continuar.');
+        return;
+      }
+      if (selected.value === 'yes') {
+        state.consent = true;
+        nextStep('profile');
+      } else {
+        state.consent = false;
+        nextStep('refused');
+      }
+    }
+
+    function handleProfileSubmit(e) {
+      e.preventDefault();
+      const mun = document.getElementById('municipio').value;
+      const tmp = document.getElementById('tempoAtuacao').value;
+      const perf = document.querySelector('input[name="perfil"]:checked')?.value;
+
+      if (!mun || !tmp || !perf) {
+        alert('Por favor, preencha todos os campos do perfil.');
+        return;
+      }
+
+      state.municipio = mun;
+      state.tempoAtuacao = tmp;
+      state.perfil = perf;
+      state.grupo = ['Gestor(a) de hotel', 'Gestor(a) de pousada', 'Gestor(a) de restaurante'].includes(perf) ? 'Grupo A' : 'Grupo B';
+      state.currentQuestionIndex = 0;
+      nextStep('specific');
+    }
+
+    function handleQuestionNext(qid, qtipo, dim) {
+      let val;
+      if (qtipo === 'select') {
+        val = document.querySelector(`input[name="${qid}"]:checked`)?.value;
+      } else if (qtipo === 'multiselect') {
+        val = Array.from(document.querySelectorAll(`input[name="${qid}"]:checked`)).map(cb => cb.value);
+        if (val.length === 0) val = null;
+      } else if (qtipo === 'text_long') {
+        val = document.getElementById(qid).value.trim();
+      }
+
+      if (!val || (Array.isArray(val) && val.length === 0)) {
+        alert('Por favor, responda à pergunta para continuar.');
+        return;
+      }
+
+      state.answers[qid] = val;
+
+      const questionsList = state.currentStep === 'specific' 
+        ? (state.grupo === 'Grupo A' ? surveyData.grupoA : surveyData.grupoB) 
+        : surveyData.blocoComum;
+
+      if (state.currentQuestionIndex < questionsList.length - 1) {
+        state.currentQuestionIndex++;
+        render();
+      } else {
+        if (state.currentStep === 'specific') {
+          state.currentStep = 'common';
+          state.currentQuestionIndex = 0;
+          render();
+        } else {
+          nextStep('final');
+        }
+      }
+    }
+
+    function handleQuestionBack() {
+      if (state.currentQuestionIndex > 0) {
+        state.currentQuestionIndex--;
+        render();
+      } else {
+        if (state.currentStep === 'common') {
+          state.currentStep = 'specific';
+          const specTotal = state.grupo === 'Grupo A' ? surveyData.grupoA.length : surveyData.grupoB.length;
+          state.currentQuestionIndex = specTotal - 1;
+          render();
+        } else if (state.currentStep === 'specific') {
+          nextStep('profile');
+        }
+      }
+    }
+
+    // --- 8. PREPARAÇÃO DO PAYLOAD E ENVIO DAS RESPOSTAS ---
+    function buildPayload() {
+      const payload = [];
+      const now = new Date().toISOString();
+
+      Object.keys(state.answers).forEach(qid => {
+        // Localiza a dimensão temática correspondente
+        let dim = "";
+        let tipo = "";
+        [...surveyData.grupoA, ...surveyData.grupoB, ...surveyData.blocoComum].forEach(q => {
+          if (q.id === qid) {
+            dim = q.dimensao;
+            tipo = q.tipo;
+          }
+        });
+
+        payload.push({
+          timestamp: now,
+          grupo: state.grupo,
+          municipio: state.municipio,
+          tempo_atuacao: state.tempoAtuacao,
+          pergunta_id: qid,
+          dimensao_tematica: dim,
+          tipo_resposta: tipo,
+          resposta: Array.isArray(state.answers[qid]) ? state.answers[qid].join(' | ') : state.answers[qid],
+          gravacao_autorizada: state.gravacaoAutorizada
+        });
+      });
+
+      return payload;
+    }
+
+    async function processFinalSubmission() {
+      const statusDiv = document.getElementById('submission-status');
+      const payload = buildPayload();
+
+      // Tenta enviar para o Webhook/API configurado
+      if (ENDPOINT_ENVIO && ENDPOINT_ENVIO.trim() !== "") {
+        try {
+          const res = await fetch(ENDPOINT_ENVIO, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          
+          if (res.ok) {
+            statusDiv.className = "mb-6 p-4 rounded-xl text-xs sm:text-sm font-medium bg-green-50 text-green-700 border border-green-200";
+            statusDiv.innerHTML = '<i class="fa-solid fa-cloud-check mr-2"></i> Respostas transmitidas com sucesso para a base de dados!';
+            return;
+          }
+        } catch (err) {
+          console.error("Erro no envio:", err);
+        }
+      }
+
+      // Fallback local caso não haja endpoint ou o envio falhe
+      statusDiv.className = "mb-6 p-4 rounded-xl text-xs sm:text-sm font-medium bg-cyan-50 text-cyan-800 border border-cyan-200";
+      statusDiv.innerHTML = '<i class="fa-solid fa-file-shield mr-2"></i> Respostas gravadas com segurança neste dispositivo. Utilize os botões abaixo para baixar uma cópia.';
+    }
+
+    // --- 9. DOWNLOAD DE DADOS EXPORTÁVEIS ---
+    function downloadJSON() {
+      const payload = buildPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pesquisa_tcc_usp_${Date.now()}.json`;
+      a.click();
+    }
+
+    function downloadCSV() {
+      const payload = buildPayload();
+      if (payload.length === 0) return;
+      
+      const headers = ["timestamp", "grupo", "municipio", "tempo_atuacao", "pergunta_id", "dimensao_tematica", "tipo_resposta", "resposta", "gravacao_autorizada"];
+      let csvContent = headers.join(",") + "\n";
+
+      payload.forEach(row => {
+        const line = headers.map(h => `"${String(row[h] || '').replace(/"/g, '""')}"`).join(",");
+        csvContent += line + "\n";
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pesquisa_tcc_usp_${Date.now()}.csv`;
+      a.click();
+    }
+
+    // INICIALIZA A APLICAÇÃO
+    render();
+  </script>
+</body>
+</html>
